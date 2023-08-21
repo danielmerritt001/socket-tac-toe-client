@@ -1,6 +1,7 @@
 import './App.css';
 import { useEffect, useState } from 'react'
 import io from 'socket.io-client'
+import { ReactDOM } from 'react';
 const socket = io.connect("http://localhost:3001")
 function App() {
   const [message, setMessage] = useState("")
@@ -26,17 +27,20 @@ function App() {
 
   useEffect(() =>{
     console.log(board)
+    board.forEach((elem, idx) => {
+      let square = document.getElementsByClassName(idx.toString())
+      square[0].setAttribute('id', elem)
+      console.log(square)
+    })
   }, [board])
 
   const highlight = (a) => {
     if (a.id === 'x') {
-      a.setAttribute('id', 'b')
       let newArr = board.map((elem, idx) => 
         (parseInt(a.className) === idx) ? 'b': elem
       )
       setBoard(newArr)
     } else {
-      a.setAttribute('id', 'x')
       let newArr = board.map((elem, idx) => 
         (parseInt(a.className) === idx) ? 'x': elem
       )

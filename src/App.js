@@ -19,18 +19,26 @@ function App() {
     socket.emit("send_message", { message, room })
   }
 
+  const sendBoard = () => {
+    socket.emit("send_board", {board, room})
+  }
+
   useEffect(() => {
     socket.on("receive_message", (data) => {
       setMessageReceived(data.message)
+      console.log(data.message)
+    }, [socket])
+    socket.on("receive_board", (data) => {
+      setBoard(data.board)
     }, [socket])
   })
+  
+  
 
   useEffect(() =>{
-    console.log(board)
     board.forEach((elem, idx) => {
       let square = document.getElementsByClassName(idx.toString())
       square[0].setAttribute('id', elem)
-      console.log(square)
     })
   }, [board])
 
@@ -69,7 +77,7 @@ function App() {
         <div className="7" onClick={(event) => {highlight(event.target)}}></div>
         <div className="8" onClick={(event) => {highlight(event.target)}}></div>
       </div>
-      <button>Send Move</button>
+      <button onClick={sendBoard}>Send Move</button>
     </div>
   );
 }

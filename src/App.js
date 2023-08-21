@@ -20,7 +20,17 @@ function App() {
   }
 
   const sendBoard = () => {
-    socket.emit("send_board", {board, room})
+    let lockedBoard = board.map(elem => {
+      if (elem === 'x') {
+        return 'X'
+      } else if(elem === 'o') {
+        return 'O'
+      } else {
+        return elem
+      }
+    })
+    setBoard(lockedBoard)
+    socket.emit("send_board", {lockedBoard, room})
   }
 
   useEffect(() => {
@@ -29,7 +39,7 @@ function App() {
       console.log(data.message)
     }, [socket])
     socket.on("receive_board", (data) => {
-      setBoard(data.board)
+      setBoard(data.lockedBoard)
     }, [socket])
   })
   
@@ -43,12 +53,7 @@ function App() {
   }, [board])
 
   const highlight = (a) => {
-    if (a.id === 'x') {
-      let newArr = board.map((elem, idx) => 
-        (parseInt(a.className) === idx) ? 'b': elem
-      )
-      setBoard(newArr)
-    } else {
+    if (a.id === 'b') {
       let newArr = board.map((elem, idx) => 
         (parseInt(a.className) === idx) ? 'x': elem
       )

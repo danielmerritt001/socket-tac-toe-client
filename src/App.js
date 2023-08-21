@@ -6,6 +6,7 @@ function App() {
   const [message, setMessage] = useState("")
   const [messageReceived, setMessageReceived] = useState('')
   const [room, setRoom] = useState("")
+  const [board, setBoard] = useState(['b','b','b','b','b','b','b','b','b'])
 
   const joinRoom = () => {
     if (room !== "") {
@@ -22,6 +23,26 @@ function App() {
       setMessageReceived(data.message)
     }, [socket])
   })
+
+  useEffect(() =>{
+    console.log(board)
+  }, [board])
+
+  const highlight = (a) => {
+    if (a.id === 'x') {
+      a.setAttribute('id', 'b')
+      let newArr = board.map((elem, idx) => 
+        (parseInt(a.className) === idx) ? 'b': elem
+      )
+      setBoard(newArr)
+    } else {
+      a.setAttribute('id', 'x')
+      let newArr = board.map((elem, idx) => 
+        (parseInt(a.className) === idx) ? 'x': elem
+      )
+      setBoard(newArr)
+    }
+  }
   return (
     <div className="App">
       <input type="select" placeholder='Room #' onChange={(event) => {
@@ -33,6 +54,18 @@ function App() {
       <button onClick={sendMessage}>Send Message</button>
       <h1>Message</h1>
       {messageReceived}
+      <div className="board">
+        <div className="0" onClick={(event) => {highlight(event.target)}}></div>
+        <div className="1" onClick={(event) => {highlight(event.target)}}></div>
+        <div className="2" onClick={(event) => {highlight(event.target)}}></div>
+        <div className="3" onClick={(event) => {highlight(event.target)}}></div>
+        <div className="4" onClick={(event) => {highlight(event.target)}}></div>
+        <div className="5" onClick={(event) => {highlight(event.target)}}></div>
+        <div className="6" onClick={(event) => {highlight(event.target)}}></div>
+        <div className="7" onClick={(event) => {highlight(event.target)}}></div>
+        <div className="8" onClick={(event) => {highlight(event.target)}}></div>
+      </div>
+      <button>Send Move</button>
     </div>
   );
 }

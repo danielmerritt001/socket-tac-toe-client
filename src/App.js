@@ -8,6 +8,7 @@ function App() {
   const [room, setRoom] = useState("")
   const [board, setBoard] = useState(['b','b','b','b','b','b','b','b','b'])
   const [turn, setTurn] = useState(null)
+  const [myTurn, setMyTurn] = useState(true)
 
   const joinRoom = () => {
     if (room !== "") {
@@ -20,22 +21,29 @@ function App() {
   }
 
   const sendBoard = () => {
-    let lockedBoard = board.map(elem => {
-      if (elem === 'x') {
-        return 'X'
-      } else if(elem === 'o') {
-        return 'O'
-      } else {
-        return elem
+    if (myTurn === true) {
+      let theirTurn = false
+      let lockedBoard = board.map(elem => {
+        if (elem === 'x') {
+          setMyTurn(false)
+          theirTurn = true
+          return 'X'
+        } else if(elem === 'o') {
+          setMyTurn(false)
+          theirTurn = true
+          return 'O'
+        } else {
+          return elem
+        }
+      })
+      let newTurn = true
+      if (turn !== null) {
+        newTurn = !turn
       }
-    })
-    let newTurn = true
-    if (turn !== null) {
-      newTurn = !turn
+      setTurn(newTurn)
+      setBoard(lockedBoard)
+      socket.emit("send_board", {lockedBoard, newTurn, theirTurn, room})
     }
-    setTurn(newTurn)
-    setBoard(lockedBoard)
-    socket.emit("send_board", {lockedBoard, newTurn, room})
   }
 
   useEffect(() => {
@@ -46,6 +54,7 @@ function App() {
     socket.on("receive_board", (data) => {
       setBoard(data.lockedBoard)
       setTurn(data.newTurn)
+      setMyTurn(data.theirTurn)
     }, [socket])
   })
   
@@ -59,16 +68,23 @@ function App() {
   }, [board])
 
   const highlight = (a) => {
-    if (a.id === 'b') {
-      let newArr = board.map((elem, idx) => 
-        (parseInt(a.className) === idx) ? 'x': elem
-      )
-      setBoard(newArr)
-    } else if (a.id === 'x' || a.id === 'y') {
-      let newArr = board.map((elem, idx) => 
-        (parseInt(a.className) === idx) ? 'b': elem
-      )
-      setBoard(newArr)
+    if(myTurn) {
+      if (a.id === 'b' && !turn) {
+        let newArr = board.map((elem, idx) => 
+          (parseInt(a.className) === idx) ? 'x': elem
+        )
+        setBoard(newArr)
+      } else if (a.id === 'b' && turn) {
+        let newArr = board.map((elem, idx) => 
+          (parseInt(a.className) === idx) ? 'o': elem
+        )
+        setBoard(newArr)
+      } else if (a.id === 'x' || a.id === 'o') {
+        let newArr = board.map((elem, idx) => 
+          (parseInt(a.className) === idx) ? 'b': elem
+        )
+        setBoard(newArr)
+      }
     }
   }
   return (

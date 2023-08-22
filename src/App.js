@@ -1,13 +1,13 @@
 import './App.css';
 import { useEffect, useState } from 'react'
 import io from 'socket.io-client'
-import { ReactDOM } from 'react';
 const socket = io.connect("http://localhost:3001")
 function App() {
   const [message, setMessage] = useState("")
   const [messageReceived, setMessageReceived] = useState('')
   const [room, setRoom] = useState("")
   const [board, setBoard] = useState(['b','b','b','b','b','b','b','b','b'])
+  const [turn, setTurn] = useState(null)
 
   const joinRoom = () => {
     if (room !== "") {
@@ -29,8 +29,13 @@ function App() {
         return elem
       }
     })
+    let newTurn = true
+    if (turn !== null) {
+      newTurn = !turn
+    }
+    setTurn(newTurn)
     setBoard(lockedBoard)
-    socket.emit("send_board", {lockedBoard, room})
+    socket.emit("send_board", {lockedBoard, newTurn, room})
   }
 
   useEffect(() => {
@@ -40,6 +45,7 @@ function App() {
     }, [socket])
     socket.on("receive_board", (data) => {
       setBoard(data.lockedBoard)
+      setTurn(data.newTurn)
     }, [socket])
   })
   
@@ -58,6 +64,11 @@ function App() {
         (parseInt(a.className) === idx) ? 'x': elem
       )
       setBoard(newArr)
+    } else if (a.id === 'x' || a.id === 'y') {
+      let newArr = board.map((elem, idx) => 
+        (parseInt(a.className) === idx) ? 'b': elem
+      )
+      setBoard(newArr)
     }
   }
   return (
@@ -70,6 +81,9 @@ function App() {
         setMessage(event.target.value)}}/>
       <button onClick={sendMessage}>Send Message</button>
       <h1>Message</h1>
+      {turn == null &&
+        <div>First to go gets to be X</div>
+      }
       {messageReceived}
       <div className="board">
         <div className="0" onClick={(event) => {highlight(event.target)}}></div>
@@ -83,6 +97,7 @@ function App() {
         <div className="8" onClick={(event) => {highlight(event.target)}}></div>
       </div>
       <button onClick={sendBoard}>Send Move</button>
+      <div>{turn}</div>
     </div>
   );
 }

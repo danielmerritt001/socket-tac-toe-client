@@ -171,28 +171,32 @@ function App() {
           <button onClick={newGame}>New Game</button>
         </div>
       }
-      <div className="board">
-        <div className="0" onClick={(event) => {highlight(event.target)}}></div>
-        <div className="1" onClick={(event) => {highlight(event.target)}}></div>
-        <div className="2" onClick={(event) => {highlight(event.target)}}></div>
-        <div className="3" onClick={(event) => {highlight(event.target)}}></div>
-        <div className="4" onClick={(event) => {highlight(event.target)}}></div>
-        <div className="5" onClick={(event) => {highlight(event.target)}}></div>
-        <div className="6" onClick={(event) => {highlight(event.target)}}></div>
-        <div className="7" onClick={(event) => {highlight(event.target)}}></div>
-        <div className="8" onClick={(event) => {highlight(event.target)}}></div>
-      </div>
-      <button onClick={sendBoard}>Send Move</button>
-      <div>{turn}</div>
-      {messageReceived}
-      {messageBoard &&
-      messageBoard.map(function(elem) {
-      return (
+      <div className="board-chat">
         <div>
-          {elem}
+          <div className="board">
+            <div className="0" onClick={(event) => {highlight(event.target)}}></div>
+            <div className="1" onClick={(event) => {highlight(event.target)}}></div>
+            <div className="2" onClick={(event) => {highlight(event.target)}}></div>
+            <div className="3" onClick={(event) => {highlight(event.target)}}></div>
+            <div className="4" onClick={(event) => {highlight(event.target)}}></div>
+            <div className="5" onClick={(event) => {highlight(event.target)}}></div>
+            <div className="6" onClick={(event) => {highlight(event.target)}}></div>
+            <div className="7" onClick={(event) => {highlight(event.target)}}></div>
+            <div className="8" onClick={(event) => {highlight(event.target)}}></div>
+          </div>
+          <button onClick={sendBoard}>Send Move</button>
         </div>
-        )
-      })}
+        <div className='chat-board'>
+          {messageBoard &&
+          messageBoard.map(function(elem) {
+          return (
+            <div className='chat-message'>
+              {elem}
+            </div>
+            )
+          })}
+        </div>
+      </div>
     </div>
   );
 }

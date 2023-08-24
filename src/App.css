@@ -16,6 +16,12 @@ button:hover {
   background-color: gray;
 }
 
+.board-chat {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
 .board {
   display: flex;
   flex-wrap: wrap;

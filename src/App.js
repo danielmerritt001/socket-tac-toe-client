@@ -21,7 +21,7 @@ function App() {
   const [turn, setTurn] = useState(null)
   const [myTurn, setMyTurn] = useState(true)
   const [win, setWin] = useState(false)
-  const [messageBoard, setMessageBoard] = useState([2])
+  const [messageBoard, setMessageBoard] = useState([])
 
   const joinRoom = () => {
     if (room !== "") {
@@ -30,7 +30,9 @@ function App() {
   }
 
   const sendMessage = () => {
-    socket.emit("send_message", { message, room })
+    let newMessageBoard = [...messageBoard, message]
+    setMessageBoard(newMessageBoard)
+    socket.emit("send_message", { newMessageBoard, room })
   }
 
   const sendBoard = () => {
@@ -74,8 +76,7 @@ function App() {
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
-      setMessageReceived(data.message)
-      console.log(data.message)
+      setMessageBoard(data.newMessageBoard)
     }, [socket])
     socket.on("receive_board", (data) => {
       setBoard(data.lockedBoard)

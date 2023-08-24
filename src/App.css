@@ -1,5 +1,19 @@
+body {
+  background-color: rgb(59, 57, 57);
+  color: white;
+}
+
 .App {
   text-align: center;
+}
+
+button {
+  margin: 5px;
+  border-radius: 25px;
+}
+
+button:hover {
+  background-color: gray;
 }
 
 .board {
